@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  api:
+    build:
+      dockerfile: ./docker/api/Dockerfile
+      context: .
+    ports:
+      - 8000:8000
+    tty: true
+    volumes:
+      - ./app:/go/src/app
+    command: "air"
+    environment:
+      GOPROXY: directkiyo
