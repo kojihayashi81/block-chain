@@ -2,18 +2,24 @@ package app
 
 import (
 	"app/clock"
-	"app/tests/testUtils"
-	"bytes"
-	"os"
+	"app/tests/testutils"
 	"reflect"
-	"strings"
 	"testing"
 	"time"
 )
 
+type Mock struct {
+	App
+	FakeCreateBlock func(nonce int, previousHash string) *Block
+}
+
+func (m *Mock) CreateBlock(nonce int, previousHash string) *Block {
+	return m.FakeCreateBlock(nonce, previousHash)
+}
+
 func TestNewBlock(t *testing.T) {
 	t.Parallel()
-	testUtils.SetFakeTime(time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
+	testutils.SetFakeTime(time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
 	got := NewBlock(0, "init hash")
 	want := &Block{
 		timestamp:    clock.Now().UnixNano(),
@@ -21,51 +27,39 @@ func TestNewBlock(t *testing.T) {
 		previousHash: "init hash",
 		transactions: []string{},
 	}
-	if !reflect.DeepEqual(&got, &want) {
-		t.Errorf("failed to test.")
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("テストに失敗しました。")
 	}
 }
 
 func TestNewBlockchain(t *testing.T) {
 	t.Parallel()
-	testUtils.SetFakeTime(time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
+	testutils.SetFakeTime(time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
+	chain := []*Block{{
+		timestamp:    clock.Now().UnixNano(),
+		nonce:        0,
+		previousHash: "init hash",
+		transactions: []string{},
+	}}
 	got := NewBlockChain()
-	want := "aa"
-	// want := &Blockchain{
-	// 	transactionPool: []string{},
-	// 	chain:           &Block{},
-	// }
-	if !reflect.DeepEqual(&got, &want) {
-		t.Errorf("failed to test.")
+	want := &Blockchain{
+		transactionPool: []string{},
+		chain:           chain,
+	}
+	if !reflect.DeepEqual(&got.chain, &want.chain) {
+		t.Errorf("テストに失敗しました。")
+	}
+	if &got.transactionPool == &want.transactionPool {
+		t.Errorf("テストに失敗しました。")
 	}
 }
+
 func TestMain(t *testing.T) {
 	t.Parallel()
-	testUtils.SetFakeTime(time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
-	got := extractStdout(t, main)
-	want := "nonce        :0\npreviousHash :init hash\ntimestamp    :1577836800000000000\ntransactions :[]"
+	testutils.SetFakeTime(time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local))
+	got := testutils.ExtractStdout(t, main)
+	want := "nonce        :0\npreviousHash :init hash\ntimestamp    :1577804400000000000\ntransactions :[]"
 	if got != want {
-		t.Errorf("failed to test. got: %s, want: %s", got, want)
+		t.Errorf("テストに失敗しました。 got: %s, want: %s", got, want)
 	}
-}
-
-func extractStdout(t *testing.T, fnc func()) string {
-	t.Helper()
-	orgStdout := os.Stdout
-
-	defer func() {
-		os.Stdout = orgStdout
-	}()
-
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	fnc()
-
-	w.Close()
-	var buf bytes.Buffer
-	if _, err := buf.ReadFrom(r); err != nil {
-		t.Fatalf("Failed to read buf: %v", err)
-	}
-	return strings.TrimRight(buf.String(), "\n")
 }
