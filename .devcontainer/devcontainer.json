@@ -1,5 +1,5 @@
 {
-	"name": "Go-Practice",
+	"name": "Go-Blockchain",
 	"dockerComposeFile": [
 		"../docker-compose.yml",
 	],
