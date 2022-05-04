@@ -15,7 +15,10 @@ func ExtractStdout(t *testing.T, fnc func()) string {
 		os.Stdout = orgStdout
 	}()
 
-	r, w, _ := os.Pipe()
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("fail pipe: %v", err)
+	}
 	os.Stdout = w
 
 	fnc()

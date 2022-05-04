@@ -15,7 +15,10 @@
 		"editor.formatOnSave": false,
 		"[go]": {
 			"editor.formatOnSave": true
-		}
+		},
+		"go.toolsEnvVars":{
+			"GO111MODULE":"on"
+		},
 	},
 	"extensions": [
 		"golang.go"
