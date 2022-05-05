@@ -9,7 +9,20 @@ services:
       - 8000:8000
     tty: true
     volumes:
-      - ./app:/go/src/app
+      - ./api:/go/src/api:cached
     command: "air"
     environment:
       GOPROXY: directkiyo
+    links:
+      - front
+
+  front:
+    build:
+      dockerfile: ./docker/front/Dockerfile
+      context: .
+    tty: true
+    ports:
+      - 3000:3000
+    volumes:
+      - ./front:/usr/src/front:cached
+    # command: "next dev"

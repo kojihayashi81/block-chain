@@ -1,0 +1,14 @@
+{
+	"name": "front",
+	"service": "front",
+	"shutdownAction": "none",
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+	],
+	"workspaceFolder": "/usr/src/front",
+	"settings": {
+		"editor.formatOnSave": false,
+	},
+	"extensions": [
+	],
+}

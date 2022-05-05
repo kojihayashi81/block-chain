@@ -1,10 +1,11 @@
 {
-	"name": "Go-Blockchain",
+	"name": "api",
+	"service": "api",
+	"shutdownAction": "none",
 	"dockerComposeFile": [
 		"../docker-compose.yml",
 	],
-	"service": "api",
-	"workspaceFolder": "/go/src/app",
+	"workspaceFolder": "/go/src/api",
 	"settings": {
 		"go.toolsManagement.checkForUpdates": "off",
 		"go.gopath": "/go",

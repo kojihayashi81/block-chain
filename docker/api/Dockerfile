@@ -1,8 +1,8 @@
 FROM golang:1.18-alpine
 
-WORKDIR /go/src/app
+WORKDIR /go/src/api
 
-COPY ./app .
+COPY ./api .
 
 ENV GO111MODULE=on
 
