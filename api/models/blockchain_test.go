@@ -119,7 +119,7 @@ func TestNewBlockchain(t *testing.T) {
 		transactions: []*Transaction{},
 	}
 	c := []*Block{appendBlock}
-	got := NewBlockchain("test Address")
+	got := NewBlockchain("test Address", uint16(8000))
 	want := &Blockchain{
 		transactionPool:   []*Transaction{},
 		chain:             c,
@@ -317,7 +317,7 @@ func TestAddTransaction(t *testing.T) {
 	} {
 		t.Run(test.title, func(t *testing.T) {
 			w := NewWallet()
-			bc := NewBlockchain(w.BlockchainAddress())
+			bc := NewBlockchain(w.BlockchainAddress(), uint16(8000))
 			got := bc.AddTransaction(
 				test.input_sender_public_key,
 				test.input_signature,
@@ -353,7 +353,7 @@ func TestVerifyTransactionSignature(t *testing.T) {
 	} {
 		t.Run(test.title, func(t *testing.T) {
 			w := NewWallet()
-			bc := NewBlockchain(w.BlockchainAddress())
+			bc := NewBlockchain(w.BlockchainAddress(), uint16(8000))
 			got := bc.VerifyTransactionSignature(
 				test.input_sender_public_key,
 				test.input_signature,
@@ -402,7 +402,7 @@ func TestProofOfWork(t *testing.T) {
 	b := new(Block)
 	bc.chain = append(bc.chain, b)
 	got := bc.ProofOfWork()
-	want := 314
+	want := 1592
 	if got != want {
 		t.Errorf("テストに失敗しました。 got:%#v want:%#v", got, want)
 	}
@@ -430,7 +430,7 @@ func TestCalculateTotalAmount(t *testing.T) {
 	walletA := NewWallet()
 	walletB := NewWallet()
 
-	bc := NewBlockchain(walletM.BlockchainAddress())
+	bc := NewBlockchain(walletM.BlockchainAddress(), uint16(8000))
 
 	value1 := random(0.0, 5.0)
 	wtr1 := NewWalletTransaction(walletA.PrivateKey(), walletA.PublicKey(), walletA.BlockchainAddress(), walletB.BlockchainAddress(), value1)
