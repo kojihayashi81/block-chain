@@ -1,10 +1,10 @@
 package main
 
 import (
-	"app/server"
+	"app/servers"
 	"flag"
-	"fmt"
 	"log"
+	"net/http"
 )
 
 func init() {
@@ -12,9 +12,19 @@ func init() {
 }
 
 func main() {
-	port := flag.Uint("port", 8080, "TCP Port Number Start Blockchain Server")
-	flag.Parse()
-	app := server.NewBlockchainServer(uint16(*port))
-	fmt.Println("start")
-	app.Run()
+	blockchainServer := http.NewServeMux()
+	bcs := servers.NewBlockchainServer(uint16(8000))
+	blockchainServer.HandleFunc("/blockchain", bcs.GetChain)
+	blockchainServer.HandleFunc("/transactions", bcs.Transactions)
+
+	walletServer := http.NewServeMux()
+	gateway := flag.String("gateway", "http://127.0.0.1:5000", "Blockchain Gateway")
+	ws := servers.NewWalletServer(uint16(5000), *gateway)
+	walletServer.HandleFunc("/wallet", ws.GetWallet)
+	walletServer.HandleFunc("/transaction", ws.CreateTransaction)
+
+	go func() {
+		http.ListenAndServe("0.0.0.0:8000", blockchainServer)
+	}()
+	http.ListenAndServe("127.0.0.1:5000", walletServer)
 }
