@@ -4,6 +4,7 @@ import { createStyles, makeStyles } from '@mui/styles';
 import axios from "axios";
 import { FC, useState, useEffect } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import useSWR from "swr";
 import { SchemaOf, string, object } from "yup";
 
 import ReactHookFormTextField from "../src/components/RHookFormText";
@@ -34,6 +35,8 @@ const formSchema: SchemaOf<IFormProps> = object({
   value: string().required('入力必須です'),
 })
 
+const fetcher = (url: string) => axios.get(url).then(res => res.data)
+
 const FieldArrayForm: FC = () => {
   const [wallet, setWallet] = useState<Wallet>({
     public_key: "",
@@ -52,6 +55,8 @@ const FieldArrayForm: FC = () => {
     }
     getWallet()
   }, [])
+
+  const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_WALLET_API_URL}/wallet/amount`, fetcher)
 
   const classes = useStyles()
 

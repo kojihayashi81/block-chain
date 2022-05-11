@@ -2,6 +2,8 @@ package models
 
 import (
 	"app/clock"
+	"sync"
+	"time"
 
 	"crypto/ecdsa"
 	"crypto/sha256"
@@ -15,6 +17,7 @@ const (
 	MINING_DIFFICULTY = 3
 	MINING_SENDER     = "THE BLOCKCHAIN"
 	MINING_REWARD     = 1.0
+	MINING_TIMER_SEC  = 20
 )
 
 type Block struct {
@@ -66,6 +69,7 @@ type Blockchain struct {
 	chain             []*Block
 	blockchainAddress string
 	port              uint16
+	mux               sync.Mutex
 }
 
 func (bc *Blockchain) TransactionPool() []*Transaction {
@@ -169,7 +173,19 @@ func (bc *Blockchain) ProofOfWork() int {
 	return nonce
 }
 
+func (bc *Blockchain) StartMining() {
+	bc.Mining()
+	time.AfterFunc(time.Second*MINING_TIMER_SEC, bc.StartMining)
+}
+
 func (bc *Blockchain) Mining() bool {
+	bc.mux.Lock()
+	defer bc.mux.Unlock()
+
+	if len(bc.transactionPool) == 0 {
+		return false
+	}
+
 	bc.AddTransaction(
 		nil,
 		nil,
@@ -264,4 +280,16 @@ func (btr *BlockchainTransactionRequest) ValidateBlockchainTransactionRequest() 
 		return false
 	}
 	return true
+}
+
+type AmountRequest struct {
+	Amount float32 `json:"amount"`
+}
+
+func (ar *AmountRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Amount float32 `json:"amount"`
+	}{
+		Amount: ar.Amount,
+	})
 }
