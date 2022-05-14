@@ -11,6 +11,7 @@ import (
 	"math/big"
 
 	"github.com/btcsuite/btcutil/base58"
+	//lint:ignore SA1019 because Use RIPEMD-160 even if deprecated due to the procedure described in Technical background of version 1 Bitcoin addresses.
 	"golang.org/x/crypto/ripemd160"
 )
 
