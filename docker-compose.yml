@@ -11,8 +11,6 @@ services:
     volumes:
       - ./api:/go/src/api:cached
     command: "air"
-    environment:
-      GOPROXY: directkiyo
     links:
       - front
 
