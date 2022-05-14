@@ -245,7 +245,7 @@ func TestBlockchanPrint(t *testing.T) {
 				want += fmt.Sprintf("previousHash :%x\n", b.previousHash)
 				want += fmt.Sprintf("timestamp    :%d\n", b.timestamp)
 				if i == len(bc.chain)-1 {
-					want += fmt.Sprintf("%s", strings.Repeat("*", 50))
+					want += strings.Repeat("*", 50)
 				} else {
 					want += fmt.Sprintf("%s\n", strings.Repeat("*", 50))
 				}
